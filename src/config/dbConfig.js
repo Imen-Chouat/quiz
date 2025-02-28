@@ -55,7 +55,7 @@ async function createQuizTable() {
                     id INT PRIMARY KEY AUTO_INCREMENT,
                     teacher_id INT,
                     title VARCHAR(255) NOT NULL,
-                    status ENUM('draft', 'published', 'archived') NOT NULL,
+                    status ENUM('draft', 'published') NOT NULL,
                     timed_by ENUM('quiz','question') NOT NULL,
                     duration_minutes INT,
                     FOREIGN KEY (teacher_id) REFERENCES teachers(id) ON DELETE CASCADE
