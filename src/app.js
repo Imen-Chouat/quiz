@@ -9,5 +9,7 @@ appConfig(app);
 
 //Imen : Routes 
 app.use('/api/teachers',teacherRoutes);
+app.use('/api/student',studentRoutes);
+app.use('/api/quiz',quizRoutes);
 
 export default app ;
