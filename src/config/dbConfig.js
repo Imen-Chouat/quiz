@@ -34,7 +34,7 @@ async function createTeachersTable() {
 async function createStudentTable() {
     try {
         const [results] = await pool.query(`
-            CREATE TABLE IF NOT EXISTS students (
+            CREATE TABLE IF NOT EXISTS student (
                 id INT PRIMARY KEY AUTO_INCREMENT,
                 group_id INT,
                 name VARCHAR(100) NOT NULL,
@@ -56,6 +56,7 @@ async function createQuizTable() {
                     id INT PRIMARY KEY AUTO_INCREMENT,
                     teacher_id INT,
                     title VARCHAR(255) NOT NULL,
+                    module VARCHAR(255) NOT NULL,
                     status ENUM('draft', 'published') NOT NULL,
                     timed_by ENUM('quiz','question') NOT NULL,
                     duration_minutes INT,
@@ -74,6 +75,7 @@ async function createQuestionTable() {
                     id INT PRIMARY KEY AUTO_INCREMENT,
                     quiz_id INT,
                     question_text TEXT NOT NULL,
+                    choix ENUM ("Vrai/Faux","choix_multiple");
                     duration_minutes INT,
                     FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
                 );
@@ -90,7 +92,7 @@ async function createAnswersTable() {
                     id INT PRIMARY KEY AUTO_INCREMENT,
                     question_id INT,
                     answer_text VARCHAR(255) NOT NULL,
-                    is_correct TINYINT(1) NOT NULL DEFAULT 0,
+                    is correct  TINYINT(1) NOT NULL DEFAULT 0,
                     FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
                 );
             `);
@@ -104,7 +106,7 @@ async function createPromoTable() {
         const [results] = await pool.query(`
             CREATE TABLE IF NOT EXISTS  promo (
                 id INT PRIMARY KEY AUTO_INCREMENT,
-                name VARCHAR(50) NOT NULL
+                promo_name VARCHAR(50) NOT NULL
             );
         `);
     } catch (error) {
@@ -118,7 +120,7 @@ async function createSectionTable() {
             CREATE TABLE IF NOT EXISTS sections (
                 id INT PRIMARY KEY AUTO_INCREMENT,
                 class_id INT,
-                name VARCHAR(10),
+                section_name VARCHAR(10),
                 FOREIGN KEY (class_id) REFERENCES promo(id) ON DELETE SET NULL
             );
         `);
@@ -128,13 +130,13 @@ async function createSectionTable() {
     
 }
 
-async function createStudent_groups() {
+async function creategroups() {
     try {
         const [results] = await pool.query(`
-            CREATE TABLE IF NOT EXISTS student_groups (
+            CREATE TABLE IF NOT EXISTS groups (
                 id INT PRIMARY KEY AUTO_INCREMENT,
                 section_id INT,
-                name VARCHAR(10),
+                groupe_name VARCHAR(10),
                 FOREIGN KEY (section_id) REFERENCES sections(id) ON DELETE SET NULL
             );
         `);
@@ -144,10 +146,10 @@ async function createStudent_groups() {
     
 }
 
-async function  createQuiz_student() {
+async function  createQuiz_participants() {// student concerned by quiz
     try {
         const [result] = pool.query(`
-                CREATE TABLE IF NOR EXIST quiz_student (
+                CREATE TABLE IF NOR EXIST quizparticipants  (
                     id INT PRIMARY KEY AUTO_INCREMENT,
                     quiz_id INT,
                     student_id INT,
@@ -189,7 +191,7 @@ async function createStudent_responses() {
                     student_id INT,
                     quiz_id INT,
                     question_id INT,
-                    choice_id INT,
+                    answer_id INT,
                     is_correct BOOLEAN,
                     FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
                     FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
@@ -207,11 +209,12 @@ createStudentTable();
 createQuizTable();
 createQuestionTable();
 createAnswersTable();
-createStudent_groups();
+creategroups();
 createSectionTable();
 createPromoTable();
-createQuiz_student();
+createQuiz_participants();
 createQuiz_attempts();
 createStudent_responses();
 
 export default pool ;
+
