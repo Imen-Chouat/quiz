@@ -1,24 +1,19 @@
 import mysql from 'mysql2';
 import pool from '../config/dbConfig.js';
-import bcryptjs from 'bcryptjs';
 
 class Student {
     static async create(name,surname, email, password_hash, group_id = null) {
         try {
-            const hashedPassword = await bcryptjs.hash(password_hash,8);
-
-           
+            
             const [row] = await pool.execute(
-                `INSERT INTO students (name,surname, email, password_hash, group_id) VALUES (?, ?, ?, ?, ?)`,
-                [name, surname, email, hashedPassword, group_id]
-            );
+                `INSERT INTO students (name,surname, email, password_hash, group_id) VALUES (?, ?, ?, ?, ?)`,[name, surname, email, password_hash, group_id]);
             return row.insertId;
         } catch (error) {
             console.error(`Error creating student: ${error.message}`);
             throw new Error("Failed to create student");
         }
     }
-
+/*
     static async updateField(id, field, value) {
       
         const allowedFields = ["name","surname", "email", "password_hash", "group_id"];
@@ -42,8 +37,42 @@ class Student {
             console.error(`Error updating student field: ${error.message}`);
             throw new Error("Failed to update student field");
         }
+    }*/
+    // modification 
+    static async update_Password(id,password){
+        try {
+            password =await bcryptjs.hash(password, 8);
+            const [result] = await pool.execute(`UPDATE Student SET password_hash = ? WHERE id = ?`,[password,id]);
+            return result.affectedRows ;
+        } catch (error) {
+            console.log(error);
+        }
     }
-
+    static async update_Name(id,name){
+        try {
+            const [result] = await pool.execute(`UPDATE Student SET name = ? WHERE id = ?`,[name,id]);
+            return result.affectedRows ;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    static async update_SurName(id,surname){
+        try {
+            const [result] = await pool.execute(`UPDATE Student SET surname = ? WHERE id = ?`,[surname,id]);
+            return result.affectedRows ;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    // hna student can modify his group , section and maybe promo
+    static async update_groupid(id,group_id){
+        try {
+            const [result] = await pool.execute(`UPDATE Student SET group_id = ? WHERE id = ?`,[group_id,id]);
+            return result.affectedRows ;
+        } catch (error) {
+            console.log(error);
+        }
+    }
     static async getById(id) {
         try {
             const [students] = await pool.execute(
@@ -61,8 +90,6 @@ class Student {
             throw new Error("Failed to fetch student");
         }
     }
-
-
     static async searchByEmail(email) {
         try {
             const [result] = await pool.execute(
@@ -73,7 +100,6 @@ class Student {
             if (result.length > 0) {
                 return result[0]; 
             }
-
             return null; 
         } catch (error) {
             console.error(`Error searching student by email: ${error.message}`);
