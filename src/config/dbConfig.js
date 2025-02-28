@@ -75,7 +75,7 @@ async function createQuestionTable() {
                     id INT PRIMARY KEY AUTO_INCREMENT,
                     quiz_id INT,
                     question_text TEXT NOT NULL,
-                    choix ENUM ("Vrai/Faux","choix_multiple");
+                    choix ENUM ("Vrai/Faux","choix_multiple") NOT NULL;
                     duration_minutes INT,
                     FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
                 );
@@ -92,7 +92,7 @@ async function createAnswersTable() {
                     id INT PRIMARY KEY AUTO_INCREMENT,
                     question_id INT,
                     answer_text VARCHAR(255) NOT NULL,
-                    is correct  TINYINT(1) NOT NULL DEFAULT 0,
+                    is_correct  TINYINT(1) NOT NULL DEFAULT 0,
                     FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
                 );
             `);
@@ -154,7 +154,7 @@ async function  createQuiz_participants() {// student concerned by quiz
                     quiz_id INT,
                     student_id INT,
                     FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
-                    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
+                    FOREIGN KEY (student_id) REFERENCES student(id) ON DELETE CASCADE
                 );
             `);
     } catch (error) {
@@ -173,7 +173,7 @@ async function createQuiz_attempts() {
                     end_time DATETIME,
                     status ENUM('in_progress', 'completed', 'cancelled') NOT NULL,
                     score FLOAT,
-                    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+                    FOREIGN KEY (student_id) REFERENCES student(id) ON DELETE CASCADE,
                     FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
                     UNIQUE(student_id, quiz_id)
                 );
@@ -193,10 +193,10 @@ async function createStudent_responses() {
                     question_id INT,
                     answer_id INT,
                     is_correct BOOLEAN,
-                    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+                    FOREIGN KEY (student_id) REFERENCES student(id) ON DELETE CASCADE,
                     FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
                     FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE,
-                    FOREIGN KEY (choice_id) REFERENCES answers(id) ON DELETE CASCADE
+                    FOREIGN KEY (answer_id) REFERENCES answers(id) ON DELETE CASCADE
                 );
             `);
     } catch (error) {
