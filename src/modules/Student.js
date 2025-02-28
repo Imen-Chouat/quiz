@@ -1,12 +1,11 @@
 import mysql from 'mysql2';
 import pool from '../config/dbConfig.js';
+import bcryptjs from 'bcryptjs';
 
 class Student {
     static async create(name,surname, email, password_hash, group_id = null) {
         try {
-
-            const saltRounds = 10;
-            const hashedPassword = await bcrypt.hash(password_hash, saltRounds);
+            const hashedPassword = await bcryptjs.hash(password_hash,8);
 
            
             const [row] = await pool.execute(
@@ -30,8 +29,7 @@ class Student {
         try {
         
             if (field === "password_hash") {
-                const saltRounds = 10; 
-                value = await bcrypt.hash(value, saltRounds);
+                value = await bcryptjs.hash(value, 8);
             }
             const query = `UPDATE students SET ${field} = ? WHERE id = ?`;
             const [result] = await pool.execute(query, [value, id]);
