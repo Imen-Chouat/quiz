@@ -38,6 +38,7 @@ async function createStudentTable() {
                 id INT PRIMARY KEY AUTO_INCREMENT,
                 group_id INT,
                 name VARCHAR(100) NOT NULL,
+                surname VARCHAR(100) NOT NULL,
                 email VARCHAR(100) UNIQUE NOT NULL,
                 password_hash VARCHAR(255) NOT NULL,
                 created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
