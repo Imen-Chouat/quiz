@@ -29,7 +29,7 @@ const registerStudent = async (req,res)=>{
         }
         const group_id = group[0].id;
 
-        const password_hash = bcryptjs.hash(password,8);
+        const password_hash = await bcryptjs.hash(password,8);
         const newID = Student.create(name,surname,email,password_hash , group_id);
         const student = Student.getById(newID);
         return res.status(201).json(student);
